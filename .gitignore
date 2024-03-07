@@ -42,3 +42,5 @@ yarn-error.log*
 .env
 
 tsconfig.tsbuildinfo
+/.idea/.gitignore
+/.idea/leohuynh.dev.iml
