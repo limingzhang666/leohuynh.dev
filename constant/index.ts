@@ -34,15 +34,15 @@ export let FEATURED_POSTS = 5
 
 export let LOCALES = [
   {
+    code: 'cn',
+    name: '中文',
+    flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/cn.svg',
+  },
+  {
     code: 'en',
     name: 'English',
     flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/us.svg',
   },
-  {
-    code: 'es',
-    name: 'Español',
-    flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/es.svg',
-  },
 ]
 
-export let DEFAULT_LOCALE = 'en'
+export let DEFAULT_LOCALE = 'cn'

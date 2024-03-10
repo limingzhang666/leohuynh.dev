@@ -11,6 +11,7 @@ export let siteMetadata = {
   youtube: 'https://www.youtube.com/@hta218_',
   linkedin: 'https://www.linkedin.com/in/hta218/',
   locale: 'en-US',
+  // locale: 'zh-Hans',
   analyticsURL: 'https://analytics.leohuynh.dev/share/jkwRskv0/leohuynh.dev',
   analytics: {
     plausibleDataDomain: '',

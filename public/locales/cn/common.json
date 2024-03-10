@@ -1,0 +1,82 @@
+{
+  "site_meta_data": {
+    "title": "我的开发日志",
+    "author": "音十",
+    "full_name": "章黎明",
+    "header_title": "我的开发日志",
+    "footer_title": "我的开发日志",
+    "description": "我的开发日志 - 通过键盘讲述一个软件工程师工作和生活的故事",
+    "language": "中文"
+  },
+  "happy_reading": "Happy reading",
+  "menu_blog": "博客",
+  "menu_snippets": "代码片段",
+  "menu_projects": "项目",
+  "menu_about": "关于",
+  "menu_resume": "履历",
+  "greeting_message": "Howdy, fellow!",
+  "introduction": "我是",
+  "name": "章黎明",
+  "description": "一个充满激情的软件工程师",
+  "location": "上海",
+  "bio_1": "大家叫我 黎明.",
+  "bio_2": "我一直在学习充电.",
+  "bio_3": "目前在上海工作",
+  "bio_4": "I started my coding journey in late 2011 with C#/Java in college",
+  "bio_5": "I had my first job as a Java coding mentor in 2015",
+  "bio_6": "I'm writing this blog to note down and share what I've learned as a SE",
+
+  "bio_start_coding": "I started learning to code in 2016 and have been hooked ever since.",
+  "bio_first_job": "2015年毕业，第一份工作Java开发",
+  "bio_passion": "我对互联网、网络开发和电子商务充满热情。",
+  "bio_blog_purpose": "我开始写这个博客是为了记录和分享我的知识和经验。",
+  "menu_blog_2": "我的文章",
+  "menu_snippets_2": "我的代码片段集",
+  "menu_projects_2": "我做过的项目",
+  "menu_about_2": "更多关于我的信息",
+  "menu_resume_2": "我的工作经历",
+  "analytics": "本网站的流量和参与度",
+  "avatar_description": "化身",
+  "name_position": "章黎明",
+  "description_position": "Java后端开发",
+  "lost_message": "Hmm.. 看来你迷路了",
+  "return_message": "不过别担心，你可以在我的主页上找到很多其他的东西。",
+  "back_button": "回到主页",
+  "blog": {
+    "all_posts_title": "所有文章",
+    "intro": "我主要写关于网络开发，技术相关的，有时也写我的个人生活。使用下面的搜索按标题过滤。",
+    "no_posts": "没有找到文章",
+    "search_posts": "搜索文章",
+    "published_on": "发表于",
+    "under_construction": "在建设中",
+    "reading_time": "读完预计耗时{{time}} mins",
+    "mins": "分钟",
+    "views": "看过"
+  },
+  "about_description": "更多关于我和这个博客",
+  "resume_description": "我的职业生涯、经历和技能.",
+  "year": "年",
+  "month": "月",
+  "day": "日",
+  "build_with": {
+    "built_with": "构建通过",
+    "view_source": "查看源代码",
+    "copyright_author": "我的开发日志"
+  },
+  "projects": {
+    "projects_description": "我和同事一起开发的开源项目",
+    "projects_title": "项目",
+    "work_title": "工作",
+    "side_title": "业余项目",
+    "learn_more": "了解更多",
+    "built_with": "构建通过"
+  },
+  "pagination": {
+    "previous": "上页",
+    "next": "下页",
+    "of": "of"
+  },
+  "tag": {
+    "no_tags_found": "没有找到标签。"
+  }
+}

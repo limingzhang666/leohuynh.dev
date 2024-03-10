@@ -1,7 +1,7 @@
 let { replace } = ''
 
 // escape
-// let es = /&(?:amp|#38|lt|#60|gt|#62|apos|#39|quot|#34);/g
+// let cn = /&(?:amp|#38|lt|#60|gt|#62|apos|#39|quot|#34);/g
 let ca = /[&<>'"]/g
 
 let esca = {
