@@ -1,17 +1,17 @@
 export let siteMetadata = {
-  siteUrl: 'https://www.leohuynh.dev',
+  siteUrl: 'https://www.yinshi.tech',
   siteRepo: 'https://github.com/hta218/leohuynh.dev',
   siteLogo: '/static/images/logo.jpg',
   image: '/static/images/logo.jpg',
   socialBanner: '/static/images/logo.jpg',
-  email: 'leohuynh@pm.me',
-  github: 'https://github.com/hta218',
+  email: 'laimingcham@163.com',
+  github: 'https://github.com/limingzhang666',
   x: 'https://x.com/hta218_',
   facebook: 'https://facebook.com/hta218',
   youtube: 'https://www.youtube.com/@hta218_',
   linkedin: 'https://www.linkedin.com/in/hta218/',
   locale: 'en-US',
-  // locale: 'zh-Hans',
+  // locale: 'cn',
   analyticsURL: 'https://analytics.leohuynh.dev/share/jkwRskv0/leohuynh.dev',
   analytics: {
     plausibleDataDomain: '',
@@ -21,9 +21,14 @@ export let siteMetadata = {
   },
   socialAccounts: {
     github: 'hta218',
-    linkedin: 'hta218',
-    x: 'hta218_',
+    // linkedin: 'hta218',
+    // x: 'hta218_',
   },
+  // add byzhangliming 20240310
+  beian: 'http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=36100202000363/',
+  gitee: 'https://gitee.com/YinShiLiMing',
+  footerTitle: '赣公网安备 36100202000363号',
+  footerTitle2: 'ICP备案/许可证号:赣ICP备2022001063号-1',
 }
 
 /**
@@ -37,12 +42,13 @@ export let commentConfig = {
   provider: 'giscus', // 'giscus' | 'utterances' | 'disqus',
   // https://giscus.app/
   giscusConfig: {
-    repo: '', // process.env.GISCUS_REPO
-    repositoryId: '', // process.env.GISCUS_REPOSITORY_ID
-    category: '', // process.env.GISCUS_CATEGORY
-    categoryId: '', // process.env.GISCUS_CATEGORY_ID
-    mapping: 'title',
-    reactions: '1',
+    repo: 'limingzhang666/giscus', // process.env.GISCUS_REPO
+    repositoryId: 'R_kgDOHndu7g', // process.env.GISCUS_REPOSITORY_ID
+    category: 'Announcements', // process.env.GISCUS_CATEGORY
+    categoryId: 'DIC_kwDOHndu7s4CQEwa', // process.env.GISCUS_CATEGORY_ID
+    mapping: 'title', // supported options: pathname, url, title
+    reactions: '1', // Emoji reactions: 1 = enable / 0 = disable
+    // Send discussion metadata periodically to the parent window: 1 = enable / 0 = disable
     metadata: '0',
     lightTheme: 'light',
     darkTheme: 'transparent_dark',
