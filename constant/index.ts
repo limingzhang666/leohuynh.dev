@@ -45,4 +45,4 @@ export let LOCALES = [
   },
 ]
 
-export let DEFAULT_LOCALE = 'cn'
+export let DEFAULT_LOCALE = 'en'

@@ -38,4 +38,4 @@ Thanks for the free resources 🙏
 
 ---
 
-Copyright (c) 2023 Tuan Anh Huynh (Leo) - Alrights reserved.
+Copyright (c) 2023 Zhangliming - Alrights reserved.

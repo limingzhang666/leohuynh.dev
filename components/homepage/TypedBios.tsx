@@ -36,32 +36,32 @@ export function TypedBios() {
         <li>{tr.t('bio_4')}</li>
         <li>{tr.t('bio_5')}</li>
         <li>{tr.t('bio_6')}</li>
-        <li>{tr.t('bio_7')}</li>
-        <li>{tr.t('bio_8')}</li>
-        <li>{tr.t('bio_9')}</li>
-        <li>
-          {tr.t('bio_10')} <Twemoji emoji="dog" />
-        </li>
-        <li>
-          {tr.t('bio_11')}
-          <span className="ml-1">
-            <Twemoji emoji="soccer-ball" />,
-            <Twemoji emoji="man-swimming" />,
-            <Twemoji emoji="ping-pong" />,
-            <Twemoji emoji="volleyball" />
-          </span>
-        </li>
-        <li>{tr.t('bio_12')}</li>
-        <li>
-          {tr.t('bio_13')} <Twemoji emoji="musical-keyboard" /> & <Twemoji emoji="guitar" />
-        </li>
-        <li>{tr.t('bio_14')}</li>
-        <li>
-          {tr.t('bio_15')} <Twemoji emoji="chess-pawn" />
-        </li>
-        <li>
-          {tr.t('bio_16')} <Twemoji emoji="video-game" />.
-        </li>
+        {/*<li>{tr.t('bio_7')}</li>*/}
+        {/*<li>{tr.t('bio_8')}</li>*/}
+        {/*<li>{tr.t('bio_9')}</li>*/}
+        {/*<li>*/}
+        {/*  {tr.t('bio_10')} <Twemoji emoji="dog" />*/}
+        {/*</li>*/}
+        {/*<li>*/}
+        {/*  {tr.t('bio_11')}*/}
+        {/*  <span className="ml-1">*/}
+        {/*    <Twemoji emoji="soccer-ball" />,*/}
+        {/*    <Twemoji emoji="man-swimming" />,*/}
+        {/*    <Twemoji emoji="ping-pong" />,*/}
+        {/*    <Twemoji emoji="volleyball" />*/}
+        {/*  </span>*/}
+        {/*</li>*/}
+        {/*<li>{tr.t('bio_12')}</li>*/}
+        {/*<li>*/}
+        {/*  {tr.t('bio_13')} <Twemoji emoji="musical-keyboard" /> & <Twemoji emoji="guitar" />*/}
+        {/*</li>*/}
+        {/*<li>{tr.t('bio_14')}</li>*/}
+        {/*<li>*/}
+        {/*  {tr.t('bio_15')} <Twemoji emoji="chess-pawn" />*/}
+        {/*</li>*/}
+        {/*<li>*/}
+        {/*  {tr.t('bio_16')} <Twemoji emoji="video-game" />.*/}
+        {/*</li>*/}
       </ul>
       <span ref={el} className="text-neutral-900 dark:text-neutral-200" />
     </div>

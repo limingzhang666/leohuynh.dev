@@ -20,9 +20,9 @@ export let siteMetadata = {
     googleAnalyticsId: '', // e.g. UA-000000-2 or G-XXXXXXX
   },
   socialAccounts: {
-    github: 'hta218',
-    // linkedin: 'hta218',
-    // x: 'hta218_',
+    github: 'YinShiLiMing',
+    linkedin: 'hta218',
+    x: 'hta218_',
   },
   // add byzhangliming 20240310
   beian: 'http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=36100202000363/',
