@@ -30,7 +30,7 @@ export function ProfileCardInfo() {
         <div className="flex items-center text-gray-700 dark:text-gray-200">
           <MapPin strokeWidth={1} size={20} />
           <p className="px-2">
-            上海 - 长宁,
+            上海 - 长宁
             <span className="absolute ml-1 inline-flex pt-px">
               <Twemoji emoji="flag-china" />
             </span>
