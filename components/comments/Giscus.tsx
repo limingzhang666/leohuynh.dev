@@ -23,6 +23,7 @@ function Giscus({ config }: GiscusProps) {
     script.setAttribute('data-emit-metadata', config.metadata)
     script.setAttribute('data-theme', giscusTheme)
     script.setAttribute('crossOrigin', 'anonymous')
+    script.setAttribute('lang', 'zh-CN')
     script.async = true
 
     let commentsNode = document.getElementById(GISCUS_COMMENTS_ID)
