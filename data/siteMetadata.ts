@@ -1,6 +1,6 @@
 export let siteMetadata = {
   siteUrl: 'https://www.yinshi.tech',
-  siteRepo: 'https://github.com/hta218/leohuynh.dev',
+  siteRepo: 'https://github.com/limingzhang666/leohuynh.dev',
   siteLogo: '/static/images/logo.jpg',
   image: '/static/images/logo.jpg',
   socialBanner: '/static/images/logo.jpg',
