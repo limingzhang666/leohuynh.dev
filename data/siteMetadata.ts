@@ -12,12 +12,13 @@ export let siteMetadata = {
   linkedin: 'https://www.linkedin.com/in/hta218/',
   locale: 'en-US',
   // locale: 'cn',
-  analyticsURL: 'https://analytics.leohuynh.dev/share/jkwRskv0/leohuynh.dev',
+  // analyticsURL: 'https://analytics.leohuynh.dev/share/jkwRskv0/leohuynh.dev',
+  analyticsURL: 'https://cloud.umami.is/share/Jd64eJ533TRh199V/yinshi.tech',
   analytics: {
     plausibleDataDomain: '',
     simpleAnalytics: false, // true | false
-    umamiWebsiteId: '2df62ae5-7f13-455b-8e54-c15b96ff2b8b',
-    googleAnalyticsId: '', // e.g. UA-000000-2 or G-XXXXXXX
+    umamiWebsiteId: '265eaeba-563f-43b0-bfff-5a955befd196',
+    googleAnalyticsId: 'G-KKCFHXF39T', // e.g. UA-000000-2 or G-XXXXXXX
   },
   socialAccounts: {
     github: 'YinShiLiMing',
