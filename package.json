@@ -4,7 +4,7 @@
     "start": "PORT=3434 next-remote-watch ./data",
     "dev": "PORT=3434 next dev",
     "postinstall": "prisma generate",
-    "build": "next build && tsx ./scripts/generate-sitemap",
+    "build": "next build && node --import tsx ./scripts/generate-sitemap",
     "serve": "PORT=3435 next start",
     "analyze": "cross-env ANALYZE=true next build",
     "lint": "next lint --fix --dir pages --dir components --dir lib --dir layouts --dir scripts --dir pages",
@@ -75,7 +75,7 @@
     "remark-frontmatter": "^4.0.1",
     "remark-parse": "^10.0.2",
     "remark-stringify": "^10.0.3",
-    "tsx": "^3.12.8",
+    "tsx": "^4.19.3",
     "typescript": "5.2.2",
     "unified": "^11.0.2",
     "unist-util-visit": "^5.0.0"
