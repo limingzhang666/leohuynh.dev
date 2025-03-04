@@ -1,5 +1,7 @@
 export function formatDate(date: string, language: string = 'en') {
-  return new Date(date).toLocaleDateString(language, {
+  // 统一 'cn' 到 'zh-CN'
+  let locale = language === 'cn' ? 'zh-CN' : language
+  return new Date(date).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

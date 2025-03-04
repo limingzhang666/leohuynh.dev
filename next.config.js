@@ -12,6 +12,7 @@ module.exports = withBundleAnalyzer({
   },
   images: {
     domains: ['i.scdn.co'],
+    unoptimized: true,
   },
   typescript: { tsconfigPath: './tsconfig.json' },
   i18n,
