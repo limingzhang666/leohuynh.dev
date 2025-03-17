@@ -1,0 +1,243 @@
+---
+title: '关于处理一次生产DTS的问题'
+date: '2024-03-20'
+tags: ['DTS', '数据同步', '问题处理', '生产环境']
+draft: false
+summary: '关于处理一次生产DTS的问题，记录问题排查和解决过程'
+images: ['/static/images/img.jpg']
+authors: ['default']
+---
+import Twemoji from './Twemoji.tsx'
+import UnsplashPhotoInfo from './UnsplashPhotoInfo.tsx'
+
+
+
+
+# 商品体系介绍
+
+### 系统定位与价值
+
+*   **核心定位**
+
+*   **供应链系统**：负责商品全生命周期管理
+
+*   **运营中台**：提供可售策略、定价策略的配置与执行能力
+
+*   **协同模式**：供应链为底座，运营中台为策略引擎，共同支撑多业务线（如百福得、官网、产品册）
+
+*   **核心价值**
+
+*   **对供应    链**：统一多来源的商品管理，保障库存准确性
+
+*   **对运营**：灵活策略配置，实现“千企千面”    
+
+*   **对业务**：支撑多销售平台的统一商品服务
+
+### 系统架构全景
+
+*   系统链路（供应链 -> 运营 -> 商城 -> 运营 -> 供应链）
+
+```mermaid
+graph LR
+    subgraph 供应链系统
+        A0[供应商门户] -->|商品提报| B(商品管理系统)
+        A1[第三方平台] -->|API接入| B
+        A2[大运营后台] -->|商品提报| B
+    end
+
+    subgraph 运营系统
+        B --> D[运营配置]
+        D --> E0[合规打标]
+        D --> E1[可售规则]
+        D --> E2[负毛利监控]
+        D --> E3[限高规则]
+        D --> E4[平台投放规则]
+        D --> E5[低毛策略配置]
+        E0 --> J[可售+价格]
+        E1 --> J
+        E2 --> J
+        E3 --> J
+        E4 --> J
+        E5 --> J
+    end
+
+    subgraph 商城
+        J --> K[商品场景]
+        K --> N0[搜索]
+        K --> N1[列表]
+        K --> N2[商详]
+        K --> N3[购物车]
+        K --> N4[下单]
+
+        N0 --> M[商品库存]
+        N1 --> M
+        N2 --> M
+        N3 --> M
+        N4 --> M
+
+        M --> O1[商品信息]
+        M --> O2[配送信息]
+        M --> O3[商品价格]
+        M --> O4[商品可售]
+    end
+
+    subgraph 供应链查询系统
+        O1 --> P1[商品服务]
+        O2 --> P2[配送服务]
+        P1 --> P3[基本信息]
+        P1 --> P5[价格/上下架]
+    end
+
+    subgraph 运营查询系统
+        O3 --> Q0[运营信息查询]
+        O4 --> Q0
+        Q0 --> Q1[可售/价格]
+        Q0 --> Q2[投放信息]
+        Q0 --> Q3[合规信息]
+        Q0 --> Q4[标签信息]
+        Q0 --> Q5[价格模板]
+        Q1 -->|存在覆盖| Q99[返回运营配置]
+        Q1 -->|无覆盖| P5
+
+    end
+
+    subgraph 供应链查询系统
+        P2 --> R0{是否自营}
+        R0 --> |是| R3[库存服务]
+        R0 --> |否| S1
+    end
+
+    subgraph 供应链查询系统
+      S1[三方适配层]
+      S1 --> 京东
+      S1 --> 天猫
+      S1 --> 网易
+    end
+
+```
+
+
+
+*   商品上架流程
+
+![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/a/pgnaMK3PXsAvYv8E/f5a7994d50c84b5a8b286241266df9f82387.png)
+
+### 供应链系统详解
+
+*   核心职责
+
+*   **商品引入**：自营/代发商品提报、第三方API商品自动接入
+
+*   **商品管理**：面向东福的管理人员对商品信息进行调整、上下架、改价，维护商品前后台分类、品牌等基础信息
+
+*   **履约保障**：库存管理、库存查询与扣减、物流时效计算、供应链采购、调拨等
+
+*   系统模块
+
+![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/a/pgnaMK3PXsAvYv8E/7038e6b1ebd544c2ac128d4972eed6092387.png)
+
+*   供应链实体商品模型关系图
+
+![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/a/pgnaMK3PXsAvYv8E/bbb5d1afe81a4484b9cf0ac3499743d62387.png)
+
+*   自营（入仓/代发）商品提报
+
+![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/a/pgnaMK3PXsAvYv8E/2d07a76dc5ca4694855de7cc36341e912387.png)
+
+*   三方对接商品自动接入
+
+![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/a/pgnaMK3PXsAvYv8E/26f639e483b24b9a85406b3c708944872387.png)
+
+*   京东对接详细说明
+
+![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/a/pgnaMK3PXsAvYv8E/a6772c79f2514e42be81b448960680bd2387.png)
+
+*   自营库存初始化
+
+![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/a/pgnaMK3PXsAvYv8E/f8c3e16331844e0982ae5243fdd6e2dc2387.png)
+
+*   自营库存新增场景
+
+![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/a/pgnaMK3PXsAvYv8E/e000251a464b46f2afbae7c9be93d1582387.png)
+
+*   虚拟库存
+
+![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/a/pgnaMK3PXsAvYv8E/e1516dfc6a6b4eb280cd21c74491bd642387.png)
+
+*   自营商品与API对接商品核心差异点
+
+| 维度       | 自营入仓             | 自营代发              | 三方对接       |
+| ---------- | -------------------- | --------------------- | -------------- |
+| 商品模型   | 东福自定义           | 东福自定义            | 三方适配东福   |
+| 成本结算   | 按采购结算（集采价） | 一件代发（裸价+运费） | 按协议价结算   |
+| 数据时效   | 实时准确             | 实时准确              | 按通知定时处理 |
+| 库存所有权 | 我方100%管控         | 供应商自主维护        | 第三方系统提供 |
+| 库存可信度 | 高                   | 中                    | 中             |
+
+*   电券商品模型关系图
+
+![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/a/pgnaMK3PXsAvYv8E/d23174fdbb394ce8b4b8444d08ecf4ec2387.png)
+
+*   电子券券码模型
+
+![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/a/pgnaMK3PXsAvYv8E/324db7ba03644f77b95a8069e63ff4962387.png)
+
+### 运营中台详解
+
+*   运营系统功能模块
+
+![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/a/pgnaMK3PXsAvYv8E/372ed7caff034cdcb18a7610fc5651ae2387.png)
+
+*   运营系统数据模型关系图
+
+![image](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/a/pgnaMK3PXsAvYv8E/f92c8a228018423f88049334e963b2652387.png)
+
+*   运营定价能力
+
+*   通用定价
+
+*   修改供应链引入后的售价，面向所有客户
+
+*   平台（工会）定价策略
+
+*   根据商品调整工会商品价格
+
+*   根据兑换平台（甄选、百福得）自动设置工会低价策略（工会命中后自动使用低价）
+
+*   根据频道人工调整工会频道低价策略（设置后工会某频道使用低价）
+
+*   根据频道、前后台分类设置商品限高策略（商品命中后自动改价）
+
+*   价格展示场景：
+
+相关截图未完成
+
+*   商品可售策略
+
+*   通用可售规则：根据商品毛利、售价设置商品自动可售规则（命中规则后商品自动不可售）
+
+*   工会可售规则：规则同上（到工会维度，建设中）
+
+*   企业折扣负毛利监控：企业频道使用折扣后负毛利自动设置不可售
+
+*   商品投放策略
+
+*   投放规则：根据频道、毛利率设置自动投放规则（到百福得、甄选、官网维度，建设中）
+
+*   标签系统
+
+*   自定义标签
+
+*   按兑换平台投放
+
+*   自定义关联商品
+
+*   按页面投放（搜索、分页类、凑单页）
+
+*   标签展示场景：
+
+| 商品列表展示                                                 | 商详展示                                                     | 搜索展示                                                     | 搜索过滤                                                     |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ![image.png](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3BMqYam6G3wbqwZL/img/bf83bc9d-6a10-419e-a596-93bcb0762107.png) | ![image.png](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3BMqYam6G3wbqwZL/img/9d23dfc3-66c4-4311-8b50-294c3305a41e.png) | ![image.png](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3BMqYam6G3wbqwZL/img/db55f177-cd5f-4224-b7c8-80f371da89fe.png) | ![image.png](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/3BMqYam6G3wbqwZL/img/a5fc9856-934d-4b5b-8b67-087cdc68d285.png) |
+
+*   *
