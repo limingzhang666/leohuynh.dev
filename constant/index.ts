@@ -36,13 +36,13 @@ export let LOCALES = [
   {
     code: 'cn',
     name: '中文',
-    flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/cn.svg',
+    flag: 'https://img.yinshi.tech/icons/cn.svg',
     //flag: '/static/images/cn.svg',
   },
   {
     code: 'en',
     name: 'English',
-    flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/us.svg',
+    flag: 'https://img.yinshi.tech/icons/us.svg',
     //flag: '/static/images/us.svg',
   },
 ]
