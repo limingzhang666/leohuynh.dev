@@ -48,3 +48,4 @@ tsconfig.tsbuildinfo
 /prisma/migrations/20250318034118_init/
 /prisma/migrations/migration_lock.toml
 /prisma/dev.db
+prisma/dev.db
