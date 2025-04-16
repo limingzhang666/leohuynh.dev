@@ -9,6 +9,7 @@ export function PageSeo({ title, description }: PageSeoProps) {
     <Head>
       <title>{title}</title>
       <meta name="robots" content="follow, index" />
+      <meta name="msvalidate.01" content="C14D981610026A56944E7E865672408E" />
       <meta name="description" content={description} />
       <meta property="og:url" content={`${siteMetadata.siteUrl}${router.asPath}`} />
       <meta property="og:type" content="website" />
@@ -88,6 +89,7 @@ export function BlogSeo(props: BlogSeoProps) {
       <Head>
         <title>{`${title}`}</title>
         <meta name="robots" content="follow, index" />
+        <meta name="msvalidate.01" content="C14D981610026A56944E7E865672408E" />
         <meta name="description" content={summary} />
         <meta property="og:url" content={`${siteMetadata.siteUrl}${router.asPath}`} />
         <meta property="og:type" content="article" />
