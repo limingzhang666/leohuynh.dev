@@ -1,0 +1,355 @@
+---
+title: 'Using Docker on Mac-M1 to install and start Elasticsearch.'
+date: '2025-06-29'
+tags: ['macos', 'ElasticsearchSetUp', 'Docker']
+draft: false
+summary: "使用Docker在Mac-M1上安装和启动Elasticsearch的全过程，并附图文解释"
+images: ['/static/images/tips.jpg']
+authors: ['default']
+---
+
+
+
+import UnsplashPhotoInfo from './UnsplashPhotoInfo.tsx'
+
+![thumbnail-image](/static/images/tips.jpg)
+<UnsplashPhotoInfo photoURL="https://unsplash.com/photos/82TpEld0_e4" author="AbsolutVision" />
+
+# 一、安装Elasticsearch
+
+### 1、使用Docker Desktop搜索elasticsearch，选择需要的版本号后可以直接点击Pull拉取，也可再终端中输入命令：
+
+```bash
+docker pull elasticsearch:8.17.0
+```
+### **2. 创建 Docker 网络（避免用** -- link）
+
+```code
+docker network create elk-net
+```
+
+### 3、拉取下来后使用启动elasticsearch，这里选择使用命令启动
+
+注意：这里需要提前在本机中创建elasticsearch.yml文件，/Users/yinshi/dfflWork/es/elasticsearch.yml是我本机的路径，需要替换成你们自己的
+这里是我的本地文件夹列表：
+```bash
+cd /Users/yinshi/dfflWork/es/
+➜  es ls
+elasticsearch.yml             kibana.yml
+es安装以及配置启动.md         vendor.js
+➜  es ls -al
+total 960
+drwxr-xr-x   7 yinshi  staff     224 Jul  5 15:42 .
+drwxr-xr-x  21 yinshi  staff     672 Jun  4 14:40 ..
+-rw-r--r--@  1 yinshi  staff    6148 Jun  4 16:20 .DS_Store
+-rw-r--r--@  1 yinshi  staff     189 Jun  4 21:01 elasticsearch.yml
+-rw-r--r--@  1 yinshi  staff   10422 Jun 29 22:42 es安装以及配置启动.md
+-rw-r--r--@  1 yinshi  staff     371 Jun  4 21:25 kibana.yml
+-rw-r--r--@  1 yinshi  staff  459899 Jun  4 15:27 vendor.js
+```
+ elasticsearch.yml文件内容
+
+```bash
+network.host: 0.0.0.0
+#  禁用用安全功能
+xpack.security.enabled: false
+xpack.security.http.ssl.enabled: false
+# 允许跨域请求
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+
+```
+启动ES（请注意，命令中的文件路径和镜像版本是根据你的实际情况提供的示例路径和版本号，你可以根据自己的需求进行相应的调整）
+
+```bash
+
+docker run --name es --network elk-net \
+  -p 9200:9200 -p 9300:9300 \
+  -e "discovery.type=single-node" \
+  -e ES_JAVA_OPTS="-Xms512m -Xmx512m" \
+  -v /Users/yinshi/dfflWork/es/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \
+  -d elasticsearch:8.17.0
+```
+
+启动命令解析：
+
+```bash
+docker run: 运行 Docker 容器的命令。
+--name es: 为容器指定一个名称（es）。
+ --network elk-net \ 使用本地网络
+
+-p 9200:9200 -p 9300:9300:
+将容器的端口 9200（用于 HTTP）和端口 9300（用于节点间通信）映射到宿主机的相同端口，使得可以通过宿主机访问 Elasticsearch 服务。
+
+-e "discovery.type=single-node":
+设置 Elasticsearch 的发现类型为单节点模式，这样 Elasticsearch 将以单节点的方式运行而无需进行集群发现。
+
+-e ES_JAVA_OPTS="-Xms512m -Xmx512m":
+设置 Elasticsearch 的 Java 虚拟机参数，指定初始堆内存为 512MB，最大堆内存为 512MB。
+
+-v /Users/yinshi/dfflWork/es/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:
+将宿主机上的 Elasticsearch 配置文件 /Users/yinshi/dfflWork/es/elasticsearch.yml 挂载到容器内的配置文件路径，以便使用自定义的配置。
+
+-d elasticsearch:8.17.0: 使用 Elasticsearch 8.17.0 镜像创建容器，并在后台运行。
+
+通过运行这个命令，你将在 Docker 中创建一个名为 "es" 的 Elasticsearch 容器，并将端口 9200 和 9300 映射到宿主机上，同时配置了单节点模式和自定义的 Java 虚拟机参数。你还将宿主机上的自定义配置文件挂载到容器中，以便使用该配置文件启动 Elasticsearch。
+
+```
+
+### 4、启动了之后访问： http://localhost:9200/
+![docker-es-setup](http://img.yinshi.tech/blogs/docker/01-es-docker-start.png)
+
+能够成功显示如下界面就说明成功了
+
+![Elasticsearch安装](http://img.yinshi.tech/blogs/docker/02-es-docker-start.png)
+
+## 二、安装可视化界面：[elasticsearch-head](https://so.csdn.net/so/search?q=elasticsearch-head&spm=1001.2101.3001.7020)
+
+### 1、使用Docker Desktop搜索elasticsearch-head，选择需要的版本号后可以直接点击Pull拉取，也可再终端中输入命令
+
+```bash
+docker pull mobz/elasticsearch-head:5
+```
+
+![拉取elasticsearch-head](http://img.yinshi.tech/blogs/docker/03-pull-elasticsearch-head.png)
+
+### 2、拉取下来后使用启动elasticsearch-head，这里选择使用命令启动
+
+```bash
+docker run -d --name es_admin -p 9100:9100 mobz/elasticsearch-head:5
+```
+
+启动命令解析：
+
+```bash
+docker run: 运行 Docker 容器的命令。
+
+-d: 将容器设置为在后台运行（守护态）。
+
+--name es_admin: 为容器指定一个名称（es_admin）。
+
+-p 9100:9100: 将容器的端口 9100 映射到宿主机的相同端口，使得可以通过宿主机访问 Elasticsearch Head。
+
+mobz/elasticsearch-head:5: 使用 mobz/elasticsearch-head 镜像的版本 5 创建容器。
+
+通过运行这个命令，你将在 Docker 中创建一个名为 "es_admin" 的 Elasticsearch Head 容器，并将容器的端口 9100 映射到宿主机上。这使得可以通过宿主机访问 Elasticsearch Head 工具，用于可视化管理 Elasticsearch 集群。
+
+！！！请注意，命令中的镜像版本是根据你的实际需求提供的示例版本号，你可以根据需要选择适合的版本。
+
+```
+
+### 3、启动后访问链接: http://localhost:9100/
+
+
+![启动elasticsearch-head](http://img.yinshi.tech/blogs/docker/04-start-elasticsearch-head.png)
+
+
+
+
+
+### 后面使用的时候遇到的问题解决：
+
+1、问题：使用elasticsearch-head查看索引中的数据时点击索引没有反应，查询不了数据，点击F12的时候发现如下报错
+```bash
+{ "error": "Content-Type header [application/x-www-form-urlencoded] is not supported", "status": 406 }
+```
+
+
+2、解决方式：
+复制elasticsearch-head容器中的vendor.js文件到本地中：
+命令：
+
+```bash
+docker cp es_admin:/usr/src/app/_site/vendor.js /Users/yinshi/dfflWork/es/vendor.js
+```
+
+然后查看并编辑刚刚新增的本地的vendor.js
+```bash
+➜  es  ls
+elasticsearch.yml             es安装以及配置启动.md         kibana.yml                    vendor.js
+➜  es pwd
+/Users/yinshi/dfflWork/es
+```
+
+
+打开本地中的vendor.js文件：
+修改第6886行：application/json;charset=UTF-8
+
+修改第7573行：application/json;charset=UTF-8
+
+![修改vendor.js](http://img.yinshi.tech/blogs/docker/05-modify-vendor-js.png)
+
+保存后，再用命令替换elasticsearch-head容器中的vendor.js文件：
+命令：
+
+```bash
+docker cp /Users/yinshi/dfflWork/es/vendor.js es_admin:/usr/src/app/_site/vendor.js
+```
+
+### 4、测试：
+
+可正常查询
+![在这里插入图片描述](https://img.yinshi.tech/blogs/docker/06-es-head.png)
+
+
+## 三、安装Kibana
+
+##### 1、使用Docker Desktop搜索Kibana，选择需要的版本号后可以直接点击Pull拉取，也可再终端中输入命令：
+
+![在这里插入图片描述](http://img.yinshi.tech/blogs/docker/08-kibana-pull.png)
+
+
+##### 2、拉取下来后使用启动elasticsearch，这里选择使用命令启动
+
+- 注意：这里需要提前在本机中创建kibana.yml文件，/Users/yinshi/dfflWork/es/kibana.yml是我本机的路径，需要替换成你们自己的
+
+kibana.yml文件内容：
+
+```bash
+server.host: "0.0.0.0"
+server.shutdownTimeout: "5s"
+# Elasticsearch HTTP 地址（不用 https，端口默认9200）
+# elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+elasticsearch.hosts: ["http://host.docker.internal:9200"]
+# 允许监控 UI 连接 Elasticsearch
+monitoring.ui.container.elasticsearch.enabled: true
+# 设置界面语言为中文
+i18n.locale: "zh-CN"
+```
+
+启动命令：
+
+```bash'
+docker run --name kibana \
+  -p 5601:5601 \
+  -v /Users/yinshi/dfflWork/es/kibana.yml:/usr/share/kibana/config/kibana.yml \
+  -d kibana:8.17.0
+```
+
+- ### **🚨 问题一：--link es:elasticsearch **已不推荐使用**
+
+```
+-- 废弃
+-- Docker 的 --link 已经过时，**推荐用自定义网络**来让 Kibana 连接 ES，例如 --network elk-net。这样 Kibana 能用 http://es:9200 访问 Elasticsearch 容器。
+docker run --name kibana -p 5601:5601 --link es:elasticsearch  -v /Users/yinshi/dfflWork/es/kibana.yml:/usr/share/kibana/config/kibana.yml -d kibana:8.18.0
+```
+
+启动命令解析：
+
+```bash
+docker run: 运行 Docker 容器的命令。
+
+--name kibana: 为容器指定一个名称（kibana）。
+
+-p 5601:5601: 将容器的端口 5601 映射到宿主机的相同端口，使得可以通过宿主机访问 Kibana 服务。
+
+--link(废弃) es:elasticsearch: 将 Elasticsearch 容器（名称为 "es"）与 Kibana 容器连接起来，以便 Kibana 可以与 Elasticsearch 进行通信。
+
+-v /Users/yinshi/dfflWork/es/kibana.yml:/usr/share/kibana/config/kibana.yml: 将宿主机上的 Kibana 配置文件 /Users/yinshi/dfflWork/es/kibana.yml 挂载到容器内的配置文件路径，以便使用自定义的配置。
+
+-d kibana:8.17.0: 使用 Kibana 8.17.0 镜像创建容器，并在后台运行。
+
+通过运行这个命令，你将在 Docker 中创建一个名为 "kibana" 的 Kibana 容器，并将端口 5601 映射到宿主机上。容器将与 Elasticsearch 容器建立连接，以便 Kibana 可以与 Elasticsearch 进行通信。你还将宿主机上的自定义配置文件挂载到容器中，以便使用该配置文件启动 Kibana。
+
+请注意，命令中的文件路径和镜像版本是根据你的实际情况提供的示例路径和版本号，你可以根据自己的需求进行相应的调整。
+
+```
+
+
+##### 3、启动后访问链接: http://localhost:5601/
+
+![在这里插入图片描述](http://img.yinshi.tech/blogs/docker/07-kibana-start.png)
+
+## 四、 安装ik分词器插件
+
+
+#### 打开终端按步骤执行一下命令
+
+##### 1、以root的身份进入到 Elasticsearch 容器：
+
+```
+docker exec -it -u 0 <elasticsearch_container_id> /bin/bash
+
+将 <elasticsearch_container_id> 替换为你的 Elasticsearch 容器的 ID或容器名。
+比如：  docker exec -it -u 0 125c0217759b71dc46ea897f397b62e4797258305dba13b9bb581d906c88945c /bin/bash
+
+```
+
+
+下载
+
+```code
+https://release.infinilabs.com/analysis-ik/stable/
+```
+
+![image-20250604215749013](http://img.yinshi.tech/blogs/docker/09-split.png)
+
+
+
+#### **✅ 2. 拷贝进容器（假设你的容器名是** **elasticsearch**
+
+```code
+docker cp elasticsearch-analysis-ik-8.17.0.zip es:/usr/share/elasticsearch/
+```
+
+#### **✅ 3. 进入容器并安装（在容器内执行）**
+
+```bash
+docker exec -it es /bin/bash
+cd /usr/share/elasticsearch
+./bin/elasticsearch-plugin install file:///usr/share/elasticsearch/elasticsearch-analysis-ik-8.17.0.zip
+
+```
+这个是我的安装过程：
+```bash
+➜  es docker exec -it es /bin/bash
+elasticsearch@125c0217759b:~$ cd /usr/share/elasticsearch
+elasticsearch@125c0217759b:~$ ./bin/elasticsearch-plugin install file:///usr/share/elasticsearch/elasticsearch-analysis-ik-8.17.0.zip
+-> Installing file:///usr/share/elasticsearch/elasticsearch-analysis-ik-8.17.0.zip
+-> Downloading file:///usr/share/elasticsearch/elasticsearch-analysis-ik-8.17.0.zip
+[=================================================] 100%??
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@     WARNING: plugin requires additional permissions     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+* java.net.SocketPermission * connect,resolve
+See https://docs.oracle.com/javase/8/docs/technotes/guides/security/permissions.html
+for descriptions of what these permissions allow and the associated risks.
+
+Continue with installation? [y/N]y
+-> Installed analysis-ik
+-> Please restart Elasticsearch to activate any plugins installed
+elasticsearch@125c0217759b:~$
+
+
+```
+
+
+#### **✅ 4. 重启 ES 容器**
+
+```bash
+docker restart es
+```
+
+### **🧪 可选测试：测试 IK 分词是否生效**
+
+重启成功后，执行如下命令测试（用 Postman 或 curl）：
+
+```code
+curl -X POST http://localhost:9200/_analyze -H 'Content-Type: application/json' -d '{
+  "analyzer": "ik_max_word",
+  "text": "我是中国人"
+}'
+
+-- 这个是我的返回结果：
+{"tokens":[{"token":"我","start_offset":0,"end_offset":1,"type":"CN_CHAR","position":0},{"token":"是","start_offset":1,"end_offset":2,"type":"CN_CHAR","position":1},{"token":"中国人","start_offset":2,"end_offset":5,"type":"CN_WORD","position":2},{"token":"中国","start_offset":2,"end_offset":4,"type":"CN_WORD","position":3},{"token":"国人","start_offset":3,"end_offset":5,"type":"CN_WORD","position":4}]}%
+```
+
+我们可以使用这个控制台进行操作：
+http://localhost:5601/app/dev_tools#/console/shell
+
+![image-20250604234007677](http://img.yinshi.tech/blogs/docker/10-console.png)
+
+
+
+本文引用参考文章：
+https://blog.csdn.net/qq_43875948/article/details/133357984
