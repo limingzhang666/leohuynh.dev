@@ -1,0 +1,148 @@
+---
+title: 'ClashX启用后无法访问公司内网问题解决记录'
+date: '2025-07-09'
+tags: ['DNS', 'ClashX', 'Clash', '内网域名解析']
+draft: false
+summary: "解决了在公司内网办公时候，使用 ClashX代理时可以访问bing、google等资源，但是无法访问公司内网域名服务，因为ClashX 劫持了 DNS，导致无法解析内网域名。"
+images: ['/static/images/tips.jpg']
+authors: ['default']
+---
+
+## 📌 一、问题现象
+
+在 macOS 上使用 ClashX 时，代理开启后可访问外网（如 Google、Baidu），但**无法访问公司内网资源**，例如：
+
+ClashX 日志输出如下错误：
+
+```
+] dial failed error=couldn't find ip: spug.dongfangfuli.com proxy=DIRECT lAddr=127.0.0.1:54445 rAddr=spug.dongfangfuli.com:443 rule=DomainSuffix rulePayload=spug.dongfangfuli.com
+[2025-07-09 13:27:45][WARN] [TCP] dial failed error=couldn't find ip: spug.dongfangfuli.com proxy=DIRECT lAddr=127.0.0.1:54446 rAddr=spug.dongfangfuli.com:443 rule=DomainSuffix rulePayload=spug.dongfangfuli.com
+[2025-07-09 13:27:46][WARN] [TCP] dial failed error=couldn't find ip: spug.dongfangfuli.com proxy=DIRECT lAddr=127.0.0.1:54450 rAddr=spug.dongfangfuli.com:443 rule=DomainSuffix rulePayload=spug.dongfangfuli.com
+[2025-07-09 13:27:46][WARN] [TCP] dial failed error=couldn't find ip: spug.dongfangfuli.com proxy=DIRECT lAddr=127.0.0.1:54457 rAddr=spug.dongfangfuli.com:443 rule=DomainSuffix rulePayload=spug.dongfangfuli.com
+[2025-07-09 13:27:47][WARN] [TCP] dial failed error=couldn't find ip: spug.dongfangfuli.com proxy=DIRECT lAddr=127.0.0.1:54468 rAddr=spug.dongfangfuli.com:443 rule=DomainSuffix rulePayload=spug.dongfangfuli.com
+[2025-07-09 13:27:47][WARN] [TCP] dial failed error=couldn't find ip: spug.dongfangfuli.com proxy=DIRECT lAddr=127.0.0.1:54469 rAddr=spug.dongfangfuli.com:443 rule=DomainSuffix ru
+```
+
+⚠️ **关闭 ClashX 后**，内网域名可以正常访问。
+
+---
+
+## 🧭 二、问题定位
+
+ClashX 默认开启 DNS 劫持，会替代系统 DNS 配置。
+而我们公司内网域名依赖内网 DNS 服务器（如 `10.8.100.121`），ClashX 未配置该 DNS，因此无法解析。
+
+🧩 虽然 ClashX 配置了 `DIRECT` 规则，但解析域名这一步失败，根本没法进入连接阶段。
+
+- 修改clashx 对应的 配置文件
+
+```code
+rules:
+		- 'DOMAIN-SUFFIX,zhihu.com,DIRECT'
+    - 'DOMAIN-SUFFIX,zhimg.com,DIRECT'
+    - 'DOMAIN-SUFFIX,zimuzu.tv,DIRECT'
+    - 'DOMAIN-SUFFIX,zoho.com,DIRECT'
+    - 'DOMAIN-SUFFIX,spug.dongfangfuli.com,DIRECT'      ## 新增配置
+```
+
+
+
+WARN 日志
+
+```bash
+] dial failed error=couldn't find ip: spug.dongfangfuli.com proxy=DIRECT lAddr=127.0.0.1:54445 rAddr=spug.dongfangfuli.com:443 rule=DomainSuffix rulePayload=spug.dongfangfuli.com
+[2025-07-09 13:27:45][WARN] [TCP] dial failed error=couldn't find ip: spug.dongfangfuli.com proxy=DIRECT lAddr=127.0.0.1:54446 rAddr=spug.dongfangfuli.com:443 rule=DomainSuffix rulePayload=spug.dongfangfuli.com
+[2025-07-09 13:27:46][WARN] [TCP] dial failed error=couldn't find ip: spug.dongfangfuli.com proxy=DIRECT lAddr=127.0.0.1:54450 rAddr=spug.dongfangfuli.com:443 rule=DomainSuffix rulePayload=spug.dongfangfuli.com
+[2025-07-09 13:27:46][WARN] [TCP] dial failed error=couldn't find ip: spug.dongfangfuli.com proxy=DIRECT lAddr=127.0.0.1:54457 rAddr=spug.dongfangfuli.com:443 rule=DomainSuffix rulePayload=spug.dongfangfuli.com
+[2025-07-09 13:27:47][WARN] [TCP] dial failed error=couldn't find ip: spug.dongfangfuli.com proxy=DIRECT lAddr=127.0.0.1:54468 rAddr=spug.dongfangfuli.com:443 rule=DomainSuffix rulePayload=spug.dongfangfuli.com
+[2025-07-09 13:27:47][WARN] [TCP] dial failed error=couldn't find ip: spug.dongfangfuli.com proxy=DIRECT lAddr=127.0.0.1:54469 rAddr=spug.dongfangfuli.com:443 rule=DomainSuffix ru
+```
+
+---
+
+## 🧠 三、问题解析
+
+ClashX 的 DNS 流程如下：
+
+![](https://img.yinshi.tech/blogs/clashx-handle-flow.png)
+
+
+
+问题关键：
+- ClashX 接管 DNS
+- 未配置内网 DNS → 域名解析失败 → 无法建立连接
+
+---
+
+## 🛠️ 四、解决方案
+
+### ✅ 步骤一：在 ClashX 中添加内网 DNS 配置
+
+查看自己电脑已经配置的DNS（eg:  x.x.x.121） ,或者咨询公司网管
+![](https://img.yinshi.tech/blogs/setting-mac-wifi-dns.png)
+
+修改你的 Clash 配置文件中 `dns` 段如下：
+
+```yaml
+dns:
+  enable: true
+  listen: '127.0.0.1:1053'
+  ipv6: true
+  default-nameserver: [114.114.114.114, 223.5.5.5, 119.29.29.29]
+  enhanced-mode: redir-host
+  fake-ip-range: 28.0.0.1/8
+  use-hosts: true
+  fake-ip-filter:
+    - '*.lan'
+    - '*.localdomain'
+    - '*.example'
+    - '*.invalid'
+    - '*.localhost'
+    - '*.test'
+    - '*.local'
+    - '*.home.arpa'
+    	# 修改 nameserver，增加公司内网DNS
+    	# nameserver 增加 x.x.x.121 ，这个是我们公司内部的DNS 地址
+  nameserver: ['x.x.x.121','tls://223.5.5.5:853', 'tls://223.6.6.6:853', 'https://doh.pub/dns-query', 'https://dns.alidns.com/dns-query']
+
+
+  # 新增内网解析
+  nameserver-policy:
+    "spug.dongfangfuli.com": "x.x.x.121"
+    "*.dongfangfuli.com": ""
+
+```
+
+---
+
+### ✅ 步骤二：增加规则使内网域名直连
+
+```yaml
+rules:
+  - DOMAIN-SUFFIX,spug.dongfangfuli.com,DIRECT
+  - DOMAIN-SUFFIX,dongfangfuli.com,DIRECT
+```
+
+---
+
+### ✅ 步骤三：clashx 选择 configs->reload config
+
+
+
+### ✅ 步骤四：浏览器重新打开网页检查是否ok，检查clashx日志
+
+![](https://img.yinshi.tech/blogs/clash-dns-ok.png)
+---
+
+## 📚 五、总结与经验
+
+| 项目        | 说明                                                     |
+|-------------|----------------------------------------------------------|
+| 问题根因    | ClashX 劫持 DNS 后未配置内网 DNS，导致域名无法解析      |
+| 影响范围    | 所有依赖公司内网 DNS 的资源，ClashX 启用后将无法访问     |
+| 解决方案    | 配置 `nameserver` 和 `nameserver-policy` 正确引导解析    |
+| 建议        | 公司所有相关域名（如 *.dongfangfuli.com）统一走内网 DNS |
+
+---
+
+🧩 本质上，这是 DNS 劫持后需要“恢复内网解析”的经典场景。ClashX 的配置虽然灵活，但需要开发者手动补齐内网需求。
